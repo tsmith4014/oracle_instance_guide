@@ -1,0 +1,6 @@
+ssh -i self.key opc@150.136.137.6
+
+
+ssh -i <private_key_file> <username>@<public-ip-address>
+
+ssh -i selfs.key opc@132.145.209.168
