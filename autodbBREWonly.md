@@ -194,3 +194,5 @@ This command grants the VEGA user unlimited space in the DATA tablespace. Execut
 ---
 
 Following these steps will set up a secure connection to your Oracle Autonomous Database using SQL\*Plus via Visual Studio Code and enable you to manage quotas on tablespaces.
+
+---
