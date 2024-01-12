@@ -4,3 +4,109 @@ ssh -i self.key opc@150.136.137.6
 ssh -i <private_key_file> <username>@<public-ip-address>
 
 ssh -i selfs.key opc@132.145.209.168
+
+
+Certainly! Here's a `README.md` that documents the troubleshooting steps we've taken, along with terminal commands and explanations. You can use this as a reference for future troubleshooting or as a guide to share with others.
+
+---
+
+# Troubleshooting Gunicorn and SELinux on Oracle Cloud Instance
+
+This document outlines the steps taken to troubleshoot and resolve issues related to running a Gunicorn service for a Django application and Nginx in an Oracle Cloud instance with SELinux enabled.
+
+## Overview
+
+The primary issues encountered were:
+
+1. Gunicorn service failing to start due to SELinux denying execution permissions.
+2. Nginx service being denied read access to certain files by SELinux.
+
+## Troubleshooting Steps
+
+### Checking Gunicorn Service Status
+
+1. **Check the status of the Gunicorn service**:
+   ```bash
+   sudo systemctl status gunicorn
+   ```
+   This command helps in understanding if the Gunicorn service is active, inactive, or encountering errors.
+
+### Modifying Permissions
+
+1. **Verify and modify permissions of the Gunicorn executable**:
+   ```bash
+   ls -l /home/opc/monty_hall_project/backend/venv/bin/gunicorn
+   sudo chmod +x /home/opc/monty_hall_project/backend/venv/bin/gunicorn
+   ```
+   Ensure that the Gunicorn executable has the necessary execution permissions.
+
+### SELinux Status and Context
+
+1. **Check SELinux status**:
+   ```bash
+   sestatus
+   ```
+   This command checks if SELinux is enabled and in enforcing mode.
+
+2. **Check SELinux context of the Gunicorn executable**:
+   ```bash
+   ls -Z /home/opc/monty_hall_project/backend/venv/bin/gunicorn
+   ```
+   Ensures that the SELinux context of the file is appropriate.
+
+### SELinux Policy Adjustment
+
+1. **Set SELinux to permissive mode temporarily** (for testing):
+   ```bash
+   sudo setenforce 0
+   ```
+   Temporarily allows operations that would have been blocked by SELinux.
+
+2. **Check for SELinux denials**:
+   ```bash
+   sudo ausearch -m avc -c 'gunicorn'
+   ```
+
+3. **Generate and install a custom SELinux policy for Gunicorn**:
+   ```bash
+   sudo ausearch -c '(gunicorn)' --raw | sudo audit2allow -M my-gunicorn
+   sudo semodule -i my-gunicorn.pp
+   ```
+
+4. **Enable the `httpd_read_user_content` boolean for Nginx**:
+   ```bash
+   sudo setsebool -P httpd_read_user_content 1
+   ```
+
+5. **Or, create a custom policy for Nginx**:
+   ```bash
+   sudo ausearch -c 'nginx' --raw | sudo audit2allow -M my-nginx
+   sudo semodule -i my-nginx.pp
+   ```
+
+### Verifying the Changes
+
+1. **Restart Gunicorn and Nginx services**:
+   ```bash
+   sudo systemctl restart gunicorn
+   sudo systemctl restart nginx
+   ```
+
+2. **Check the status of the services**:
+   ```bash
+   sudo systemctl status gunicorn
+   sudo systemctl status nginx
+   ```
+
+3. **Revert SELinux to enforcing mode** (if set to permissive):
+   ```bash
+   sudo setenforce 1
+   ```
+
+## Conclusion
+
+After applying the SELinux policy changes, the Gunicorn service for the Django application and the Nginx service should function correctly without being blocked by SELinux. It is important to monitor the system for any further SELinux denials or operational issues.
+
+---
+
+You can copy this markdown content into a `README.md` file in your project repository for documentation purposes. This README provides a structured overview of the troubleshooting process, making it easier to follow or replicate in the future.
