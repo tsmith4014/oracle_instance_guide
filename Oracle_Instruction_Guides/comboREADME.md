@@ -1,5 +1,3 @@
-Sure, let's add more details about the firewall configuration commands necessary for allowing traffic on the required ports for the application.
-
 # Comprehensive Oracle Cloud Flask Application Deployment and Troubleshooting Guide
 
 ## Initial Setup and Deployment
@@ -106,11 +104,6 @@ Sure, let's add more details about the firewall configuration commands necessary
   ```bash
   sudo systemctl restart expense-report-webapp.service
   ```
-
-## Additional Notes
-
-- Replace placeholders like `<repo_url>` with actual values.
-- This guide focuses on deploying Flask apps and addressing common issues like SELinux policy, firewall configuration, and service management.
 
 ---
 

@@ -81,3 +81,4 @@ For a more robust and production-ready setup, manage Gunicorn with systemd. This
 - If changes are made to the Gunicorn or Nginx configuration files, remember to restart the respective services.
 
 By following these steps, you should have a fully functioning setup for your Monty Hall project, with both manual and systemd-managed options for running Gunicorn.
+sudo setenforce 0
